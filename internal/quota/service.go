@@ -168,9 +168,6 @@ func (s *Service) Commit(ctx context.Context, quotaID string, amount int, versio
 			return apperr.Wrap(apperr.CodeInternal, "commit quota failed", err)
 		}
 		if affected > 0 {
-			q.UsedAmount += amount
-			q.ReservedAmount -= amount
-			q.Version++
 			_ = s.audit.Record(ctx, audit.Entry{
 				Actor: actor, Action: "commit_quota",
 				EntityType: domain.EntityQuota, EntityID: quotaID,

@@ -122,9 +122,9 @@ func (s *SQLiteStore) ReserveQuota(ctx context.Context, id string, amount, versi
 
 func (s *SQLiteStore) CommitQuota(ctx context.Context, id string, amount, version int) (int, error) {
 	ex := s.executor(ctx)
-	res, err := ex.Exec(`UPDATE quotas SET reserved_amount = reserved_amount - ?,
+	res, err := ex.Exec(`UPDATE quotas SET used_amount = used_amount + ?, reserved_amount = reserved_amount - ?,
 		version = version + 1, updated_at = ? WHERE id = ? AND version = ? AND reserved_amount >= ?`,
-		amount, nowStamp(), id, version, amount)
+		amount, amount, nowStamp(), id, version, amount)
 	if err != nil {
 		return 0, fmt.Errorf("commit quota: %w", err)
 	}
